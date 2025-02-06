@@ -1,5 +1,16 @@
 import mysql from "serverless-mysql"
 
+interface QueryParams {
+  query: string
+  values: (string | number | null)[]
+}
+
+interface DatabaseResult {
+  insertId?: number
+  affectedRows?: number
+  error?: unknown
+}
+
 const db = mysql({
   config: {
     host: process.env.CLEVER_CLOUD_HOST,
@@ -10,7 +21,7 @@ const db = mysql({
   },
 })
 
-export default async function executeQuery({ query, values }: { query: string; values: any[] }) {
+export default async function executeQuery({ query, values }: QueryParams): Promise<DatabaseResult> {
   try {
     const results = await db.query(query, values)
     await db.end()
